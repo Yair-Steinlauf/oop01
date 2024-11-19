@@ -14,10 +14,12 @@ struct Vertex
     bool isHigherThan(const Vertex& other) const;
     bool isToTheRightOf(const Vertex& other) const;
     bool isValid() const;
+    Vertex getDiff(const Vertex& a) ;
+    bool scale(double factor, Vertex& center);
 };
 
 std::istream& operator>>(std::istream& istr, Vertex& v);
-std::ostream& operator<<(std::ostream& ostr, const Vertex& v);
+std::ostream& operator<<(std::ostream& ostr, Vertex& v);
 
 template <>
 struct std::formatter<Vertex>

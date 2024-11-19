@@ -1,36 +1,27 @@
 #include <iostream>
 #include <Rectangle.h>
+#include <cmath>
+#include <Board.h>
+
 
 
 Rectangle::Rectangle(const Vertex& bottomLeft, const Vertex& topRight)
 	: m_bottom_left(bottomLeft), m_top_right(topRight) //constructor
 {
-	if (!isValid(m_bottom_left, m_top_right))
-	{//not valid -> default values
-		m_bottom_left = Vertex(20, 10);
-		setVertex(20, 10, m_bottom_left);
-		setVertex(30, 20, m_top_right);
+	if (!isValid(bottomLeft, topRight))
+	{
+		this->setToDef();
 	}
-	m_heigth = m_top_right.m_row - m_bottom_left.m_row;
-	m_widgth = m_top_right.m_col - m_bottom_left.m_col;
 }
-Rectangle::Rectangle(const Vertex vertices[2])
-{
-	Rectangle(vertices[0], vertices[1]);
-}
+Rectangle::Rectangle(const Vertex vertices[2]):Rectangle(vertices[0], vertices[1])
+{}
 Rectangle::Rectangle(double x, double y, double width, double height)
-{
-	setVertex(x, y, m_bottom_left);
-	setVertex(x + width, y + height, m_top_right);
-	Rectangle(m_bottom_left, m_top_right);//this counstractor 
-	//valid check will fail if height or width is negative
-}
+	:Rectangle(Vertex(x,y), Vertex(x+width, y+height))
+{}
 
 Rectangle::Rectangle(const Vertex& topRight, double width, double height)
-{
-	setVertex(topRight.m_col - width, topRight.m_row - height, m_bottom_left);
-	Rectangle(m_bottom_left, topRight);
-}
+	:Rectangle(Vertex(topRight.m_col - width, topRight.m_row - height), topRight)
+{}
 
 bool Rectangle::isValid(const Vertex& bottomLeft, const Vertex& topRight)
 {
@@ -48,17 +39,62 @@ void Rectangle::setVertex(double x, double y, Vertex& wanted)
 
 Vertex Rectangle::getBottomLeft()const { return m_bottom_left; };
 Vertex Rectangle::getTopRight()const { return m_top_right;};
-double Rectangle::getWidth()const { return m_widgth; };
-double Rectangle::getHeight()const { return m_heigth; };
+double Rectangle::getWidth()const { return getTopRight().m_col- getBottomLeft().m_col; };
+double Rectangle::getHeight()const { return getTopRight().m_row - getBottomLeft().m_row; };
 
-void Rectangle::draw(Board& board)
+void Rectangle::draw(Board& board) const
 {
-	Vertex bottom_left = getBottomLeft(),
+	Vertex bottom_left(getBottomLeft()),
 		top_right = getTopRight(),
-		bottom_right = Vertex(top_right.m_col, bottom_left.m_row),
-		top_left = Vertex(bottom_left.m_col, top_right.m_row);
-	board.drawLine(bottom_left, bottom_right);
-	board.drawLine(bottom_right, top_right);
-	board.drawLine(top_right, top_left);
-	board.drawLine(top_left, bottom_left);
+		bottom_right = Vertex(m_top_right.m_col, m_bottom_left.m_row),
+		top_left = Vertex(m_bottom_left.m_col, m_top_right.m_row);
+//	std::cout << "BL:" << bottom_left << "\n TR:" << m_top_right << "\n";
+	board.drawLine(m_bottom_left, bottom_right);
+	board.drawLine(bottom_right, m_top_right);
+	board.drawLine(m_top_right, top_left);
+	board.drawLine(top_left, m_bottom_left);
+}
+
+Rectangle Rectangle::getBoundingRectangle()const
+{
+	return *this;
+}
+
+double Rectangle::getPerimeter() const
+{
+	return getHeight() * 2 + getWidth() * 2;
+}
+
+double Rectangle::getArea() const
+{
+	return getHeight() * getWidth();
+}
+
+Vertex Rectangle::getCenter() const
+{
+	double center_x = (getBottomLeft().m_col + getTopRight().m_col) / 2;
+	double center_y = (getBottomLeft().m_row + getTopRight().m_row) / 2;
+	return Vertex(center_x, center_y);
+}
+
+bool Rectangle::scale(double factor)
+{
+	if (factor <= 0) return false;
+	Vertex center = getCenter();
+	Vertex new_bottom_left = m_bottom_left;
+	Vertex new_Top_right = m_top_right;
+	bool l_valid = new_bottom_left.scale(factor, center);
+	bool r_valid = new_Top_right.scale(factor, center);
+	if (l_valid && r_valid && isValid(new_bottom_left,new_Top_right))
+	{
+		m_bottom_left = new_bottom_left;
+		m_top_right = new_Top_right;
+		return true;
+	}
+	return true;
+}
+void Rectangle::setToDef()
+{
+	setVertex(20, 10, m_bottom_left);
+	setVertex(30, 20, m_top_right);
 }
