@@ -27,3 +27,19 @@ std::ostream& operator<<(std::ostream& ostr, const Vertex& v)
 {
     return ostr << "(" << v.m_col << ", " << v.m_row << ")";
 }
+
+
+bool Vertex::scale(double factor, Vertex& other)
+{
+    if (factor <= 0) return false;
+    double diffCol = factor * (other.m_col - m_col),
+           diffRow = factor * (other.m_row - m_row);
+    Vertex newVertex(other.m_col - diffCol, other.m_row - diffRow);
+    if (newVertex.isValid())
+    {
+        *this = newVertex;
+        return true;
+    }
+    return false;
+}
+

@@ -1,6 +1,7 @@
-#include <Board.h>
-#include <Vertex.h>
 #pragma once
+	
+#include <Vertex.h>
+#include <Board.h>
 
 class Rectangle {
 public:
@@ -12,13 +13,16 @@ public:
 	Vertex getTopRight()const;
 	double getWidth()const;
 	double getHeight()const;
-	bool isValid(const Vertex& bottomLeft, const Vertex& topRight);
-	void setVertex(double x, double y, Vertex &wanted);
-	void draw(Board& board);
+	void draw(Board& board) const;
+	Rectangle getBoundingRectangle()const;
+	double getPerimeter() const;
+	double getArea() const;
+	Vertex getCenter() const;
+	bool scale(double factor);
+	void setToDef();
 private:
 	Vertex m_bottom_left,
 		m_top_right;
-	double m_widgth,
-		m_heigth;
-
+	bool isValid(const Vertex& bottomLeft, const Vertex& topRight);
+	void setVertex(double x, double y, Vertex& wanted);
 };
