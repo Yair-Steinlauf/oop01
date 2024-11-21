@@ -2,6 +2,10 @@
 #include <Utilities.h>
 #include <cmath>
 
+bool isIsoscelesTriangle(const Vertex vertices[3]);
+bool isTriangleValid(const Vertex vertices[3]);
+
+
 IsoscelesTriangle::IsoscelesTriangle(const Vertex vertices[3]) : m_vertex0(vertices[0]), m_vertex1(vertices[1]), m_vertex2(vertices[2])
 {
 	if (!isTriangleValid(vertices) || !isIsoscelesTriangle(vertices))
@@ -98,16 +102,11 @@ void IsoscelesTriangle::draw(Board& board) const
 
 Rectangle IsoscelesTriangle::getBoundingRectangle() const
 {
-	
-	if (m_vertex0.m_row == m_vertex1.m_row) {
-		return Rectangle(fmin(m_vertex0.m_col, m_vertex1.m_col), m_vertex0.m_row, abs(m_vertex0.m_col - m_vertex1.m_col), abs(m_vertex2.m_row - m_vertex0.m_row));
-	}
-	else if (m_vertex1.m_row == m_vertex2.m_row){
-		return Rectangle(fmin(m_vertex1.m_col, m_vertex2.m_col), m_vertex1.m_row, abs(m_vertex1.m_col - m_vertex2.m_col), abs(m_vertex0.m_row - m_vertex1.m_row));
-	}
-	else {
-		return Rectangle(fmin(m_vertex0.m_col, m_vertex2.m_col), m_vertex0.m_row, abs(m_vertex0.m_col - m_vertex2.m_col), abs(m_vertex1.m_row - m_vertex0.m_row));
-	}	
+	double minX = fmin(fmin(m_vertex0.m_col, m_vertex1.m_col), m_vertex2.m_col);
+	double minY = fmin(fmin(m_vertex0.m_row, m_vertex1.m_row), m_vertex2.m_row);
+	double maxX = fmax(fmax(m_vertex0.m_col, m_vertex1.m_col), m_vertex2.m_col);
+	double maxY = fmax(fmax(m_vertex0.m_row, m_vertex1.m_row), m_vertex2.m_row);
+	return Rectangle(Vertex(minX, minY), Vertex(maxX, maxY));
 }
 
 
@@ -130,8 +129,6 @@ Vertex IsoscelesTriangle::getCenter() const{
 bool IsoscelesTriangle::scale(double factor)
 {
 	Vertex center = getCenter();
-	double x = center.m_col - (abs(center.m_col - m_vertex0.m_col) * factor);
-	double y = center.m_row - (abs(center.m_row - m_vertex0.m_row) * factor);
 	Vertex newVer0 = Vertex(center.m_col - (abs(center.m_col - m_vertex0.m_col) * factor),
 		center.m_row - (abs(center.m_row - m_vertex0.m_row) * factor));
 

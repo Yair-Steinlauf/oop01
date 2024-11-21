@@ -1,11 +1,17 @@
 #include <Triangle.h>
 #include <Utilities.h>
 #include <cmath>
+bool isTriangleValid(const Vertex vertices[3]);
 
-Triangle::Triangle(const Vertex vertices[3]) : m_vertex0(vertices[0]), m_vertex1(vertices[1]), m_vertex2(vertices[2]) {
+Triangle::Triangle(const Vertex vertices[3]) {
 
 	if (!isTriangleValid(vertices)) {
 		buildDefault();
+	}
+	else {
+		m_vertex0 = vertices[0];
+		m_vertex1 = vertices[1];
+		m_vertex2 = vertices[2];
 	}
 	
 }
@@ -62,17 +68,11 @@ void Triangle::draw(Board& board) const
 }
 Rectangle Triangle::getBoundingRectangle() const
 {
-	
-	if (m_vertex0.m_row == m_vertex1.m_row) {
-		Vertex center = Vertex((m_vertex0.m_col + m_vertex1.m_col) / 2, m_vertex0.m_row);
-		return Rectangle(fmin(m_vertex0.m_col, m_vertex1.m_col), m_vertex0.m_row, abs(m_vertex0.m_col - m_vertex1.m_col), abs(m_vertex2.m_row - m_vertex0.m_row));
-	}
-	else if (m_vertex1.m_row == m_vertex2.m_row){
-		return Rectangle(fmin(m_vertex1.m_col, m_vertex2.m_col), m_vertex1.m_row, abs(m_vertex1.m_col - m_vertex2.m_col), abs(m_vertex0.m_row - m_vertex1.m_row));
-	}
-	else {
-		return Rectangle(fmin(m_vertex0.m_col, m_vertex2.m_col), m_vertex0.m_row, abs(m_vertex0.m_col - m_vertex2.m_col), abs(m_vertex1.m_row - m_vertex0.m_row));
-	}	
+	double minX = fmin(fmin(m_vertex0.m_col, m_vertex1.m_col), m_vertex2.m_col);
+	double minY = fmin(fmin(m_vertex0.m_row, m_vertex1.m_row), m_vertex2.m_row);
+	double maxX = fmax(fmax(m_vertex0.m_col, m_vertex1.m_col), m_vertex2.m_col);
+	double maxY = fmax(fmax(m_vertex0.m_row, m_vertex1.m_row), m_vertex2.m_row);
+	return Rectangle(Vertex(minX, minY), Vertex(maxX, maxY));
 }
 
 
@@ -95,14 +95,10 @@ Vertex Triangle::getCenter() const{
 bool Triangle::scale(double factor)
 {
 	Vertex center = getCenter();
-	double x = center.m_col - (abs(center.m_col - m_vertex0.m_col) * factor);
-	double y = center.m_row - (abs(center.m_row - m_vertex0.m_row) * factor);
 	Vertex newVer0 = Vertex(center.m_col - (abs(center.m_col - m_vertex0.m_col) * factor),
 		center.m_row - (abs(center.m_row - m_vertex0.m_row) * factor));
-
 	Vertex newVer1 = Vertex(center.m_col - (abs(center.m_col - m_vertex1.m_col) * factor),
 		center.m_row - (abs(center.m_row - m_vertex1.m_row) * factor));
-
 	Vertex newVer2 = Vertex(center.m_col - (abs(center.m_col - m_vertex2.m_col) * factor),
 		center.m_row - (abs(center.m_row - m_vertex2.m_row) * factor));
 	if (newVer0.isValid() && newVer1.isValid() && newVer2.isValid()) {
@@ -117,7 +113,8 @@ bool Triangle::scale(double factor)
 }
 
 
-bool isTriangleValid(const Vertex vertices[3]) {
+bool isTriangleValid(const Vertex vertices[3]) 
+{
 	
 	return (vertices[0].isValid() && vertices[1].isValid() && vertices[2].isValid()
 		&& (vertices[0].m_row == vertices[1].m_row || vertices[1].m_row == vertices[2].m_row || vertices[0].m_row == vertices[2].m_row));

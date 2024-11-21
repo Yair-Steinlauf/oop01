@@ -6,6 +6,7 @@
 
 class IsoscelesTriangle {
 
+public:
 	IsoscelesTriangle(const Vertex vertices[3]);
 	IsoscelesTriangle (const Vertex& left, const Vertex& right, double height);
 	Vertex getVertex (int index) const;
