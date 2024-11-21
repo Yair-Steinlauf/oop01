@@ -18,6 +18,8 @@ public:
 	Vertex getCenter() const;
 	bool scale(double factor);
 
+
 private:
 	Vertex m_vertex0, m_vertex1, m_vertex2;
+	bool isTriangleValid(const Vertex vertices[3]);
 };

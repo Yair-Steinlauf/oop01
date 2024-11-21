@@ -128,22 +128,23 @@ Vertex IsoscelesTriangle::getCenter() const{
 
 bool IsoscelesTriangle::scale(double factor)
 {
-	Vertex center = getCenter();
-	Vertex newVer0 = Vertex(center.m_col - (abs(center.m_col - m_vertex0.m_col) * factor),
-		center.m_row - (abs(center.m_row - m_vertex0.m_row) * factor));
+	Vertex center(getCenter());
+	Vertex newVertex[3] = { m_vertex0, m_vertex1, m_vertex2 };
+	for (int index = 0; index < 3; index++)
+	{
+		if (!newVertex[index].scale(factor, center))
+		{
+			return false;
+		}
 
-	Vertex newVer1 = Vertex(center.m_col - (abs(center.m_col - m_vertex1.m_col) * factor),
-		center.m_row - (abs(center.m_row - m_vertex1.m_row) * factor));
-
-	Vertex newVer2 = Vertex(center.m_col - (abs(center.m_col - m_vertex2.m_col) * factor),
-		center.m_row - (abs(center.m_row - m_vertex2.m_row) * factor));
-	if (newVer0.isValid() && newVer1.isValid() && newVer2.isValid()) {
-		m_vertex0 = newVer0;
-		m_vertex1 = newVer1;
-		m_vertex2 = newVer2;
+	}
+	if (isTriangleValid(newVertex))
+	{
+		m_vertex0 = newVertex[0];
+		m_vertex1 = newVertex[1];
+		m_vertex2 = newVertex[2];
 		return true;
 	}
 	return false;
-
 	
 }
