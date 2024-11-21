@@ -2,8 +2,7 @@
 #include <Utilities.h>
 #include <cmath>
 
-bool isIsoscelesTriangle(const Vertex vertices[3]);
-bool isTriangleValid(const Vertex vertices[3]);
+
 
 
 IsoscelesTriangle::IsoscelesTriangle(const Vertex vertices[3]) : m_vertex0(vertices[0]), m_vertex1(vertices[1]), m_vertex2(vertices[2])
@@ -82,11 +81,11 @@ void IsoscelesTriangle::buildDefault()
 	m_vertex1 = Vertex(30, 20);
 	m_vertex2 = Vertex(25, 20 + sqrt(75));
 }
-bool isIsoscelesTriangle(const Vertex vertices[3])
+bool IsoscelesTriangle::isIsoscelesTriangle(const Vertex vertices[3])
 {
 	return (distance(vertices[0], vertices[1]) == distance(vertices[1], vertices[0]) || distance(vertices[1], vertices[2]) == distance(vertices[2], vertices[0]) || distance(vertices[0], vertices[2]) == distance(vertices[1], vertices[0]));
 }
-bool isTriangleValid(const Vertex vertices[3])
+bool IsoscelesTriangle::isTriangleValid(const Vertex vertices[3])
 {
 
 	return (vertices[0].isValid() && vertices[1].isValid() && vertices[2].isValid() && (vertices[0].m_row == vertices[1].m_row || vertices[1].m_row == vertices[2].m_row || vertices[0].m_row == vertices[2].m_row));

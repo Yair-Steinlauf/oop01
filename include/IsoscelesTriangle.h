@@ -24,4 +24,6 @@ public:
 
 private:
 	Vertex m_vertex0, m_vertex1, m_vertex2;
+	bool isTriangleValid(const Vertex vertices[3]);
+	bool isIsoscelesTriangle(const Vertex vertices[3]);
 };
